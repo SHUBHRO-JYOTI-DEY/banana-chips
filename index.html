@@ -1,0 +1,857 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>CareLink - Health Companion</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+    <div id="app" class="layout">
+        <!-- Sidebar (Desktop) -->
+        <aside id="desktop-sidebar" class="sidebar locked-nav">
+            <div class="sidebar-patient-info">
+                <div class="avatar lg pulse"></div>
+                <h2>Andrew Mitchell</h2>
+                <p class="patient-details">68 y/o, Post-cardiac arrest<br>Day 3 of recovery</p>
+                <button class="btn btn-outline mt-4" id="btn-caregiver"
+                    style="padding:0.5rem 1rem;font-size:0.8rem;width:100%;">Invite Caregiver</button>
+            </div>
+
+            <div class="sidebar-stats">
+                <div class="stat-card">
+                    <span class="stat-value" id="sidebar-stat-next-appt">Sept 2</span>
+                    <span class="stat-label">Next Appt</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-value" id="sidebar-stat-meds">3</span>
+                    <span class="stat-label">Meds Due</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-target="home-screen">
+                    <span class="icon">🏠</span><span>Home</span>
+                </button>
+                <button class="nav-item" data-target="chat-screen">
+                    <span class="icon">💬</span><span>Chat</span>
+                </button>
+                <button class="nav-item" data-target="meds-screen">
+                    <span class="icon">💊</span><span>Meds</span>
+                </button>
+                <button class="nav-item" data-target="appts-screen">
+                    <span class="icon">📅</span><span>Appointments</span>
+                </button>
+                <button class="nav-item" data-target="vitals-screen">
+                    <span class="icon">❤️</span><span>Vitals</span>
+                </button>
+                <button class="nav-item" data-target="timeline-screen">
+                    <span class="icon">📈</span><span>Timeline</span>
+                </button>
+                <button class="nav-item" data-target="reports-screen">
+                    <span class="icon">📋</span><span>Reports</span>
+                </button>
+                <button class="nav-item" data-target="transport-screen">
+                    <span class="icon">🚗</span><span>Transport</span>
+                </button>
+                <hr style="border:0;border-top:1px solid var(--gray-200);margin: 0.5rem 0;">
+                <button class="nav-item" data-target="profile-screen">
+                    <span class="icon">👤</span><span>User Profile</span>
+                </button>
+                <button class="nav-item" id="btn-feedback">
+                    <span class="icon">⭐</span><span>Leave Feedback</span>
+                </button>
+            </nav>
+        </aside>
+
+        <main id="main-content" class="main-content">
+
+            <!-- Welcome/Onboarding Screen -->
+            <section id="welcome-screen" class="screen bg-teal">
+                <div class="onboarding-step" id="onboarding-0" style="height:100%;">
+                    <div class="welcome-content" id="onboard-content-0" style="padding:0 1.5rem;">
+                        <div style="font-size:3rem;margin-bottom:1rem;">🏥</div>
+                        <h1>Patient Verification</h1>
+                        <p>Enter your Hospital Patient ID to securely fetch your medical records and cardiac care plan.
+                        </p>
+                        <input type="text" id="patient-id-input" placeholder="e.g. PT-8924A"
+                            style="padding:1rem;border-radius:12px;border:none;width:100%;outline:none;margin-top:1rem;color:var(--gray-800);text-align:center;font-weight:bold;font-size:1.2rem;letter-spacing:2px;" />
+                        <button class="btn btn-primary lg full-width" id="onboard-next-0"
+                            style="background:var(--white);color:var(--teal-600);margin-top:1.5rem;">Fetch
+                            Records</button>
+                    </div>
+                    <div class="welcome-content hidden" id="onboard-loader-0">
+                        <div class="nurse-spinner"
+                            style="border-top-color:var(--white);margin: 0 auto 1rem auto;width:50px;height:50px;">
+                        </div>
+                        <h2 style="color:var(--white);">Locating Records...</h2>
+                        <p style="color:var(--teal-50);">Accessing secure hospital database.</p>
+                    </div>
+                </div>
+
+                <div class="onboarding-step hidden" id="onboarding-1">
+                    <div class="welcome-content">
+                        <div class="avatar lg pulse"></div>
+                        <h1>Welcome home, Andrew.</h1>
+                        <p>Your records from <strong>Cardiac Care Associates</strong> have synced.</p>
+                        <p>I'm CareLink, your recovery companion. I'm here to help you follow your care plan, answer
+                            questions, and make sure you never miss a dose or appointment.</p>
+                        <button class="btn btn-primary lg full-width" id="onboard-next-1"
+                            style="background:var(--white);color:var(--teal-600);margin-top:1rem;">Continue</button>
+                    </div>
+                </div>
+
+                <div class="onboarding-step hidden" id="onboarding-2" style="height:100%;">
+                    <div class="welcome-content">
+                        <div style="font-size:3rem;margin-bottom:1rem;position:relative;display:inline-block;"
+                            id="watch-icon-container">
+                            <div class="watch-ping"></div>
+                            ⌚
+                        </div>
+                        <h1 id="watch-sync-title">Sync your health.</h1>
+                        <p id="watch-sync-desc">Connect your Apple Watch or fitness tracker to allow CareLink to
+                            securely monitor your vitals in real-time during your recovery.</p>
+                        <div style="display:flex;gap:1rem;margin-top:2rem;width:100%;" id="watch-btn-container">
+                            <button class="btn btn-outline full-width"
+                                style="border-color:var(--white);color:var(--white);" id="onboard-skip-2">Skip</button>
+                            <button class="btn btn-primary full-width" id="onboard-next-2"
+                                style="background:var(--white);color:var(--teal-600);">Connect</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="onboarding-step hidden" id="onboarding-3" style="height:100%;">
+                    <div class="welcome-content">
+                        <div style="font-size:3rem;margin-bottom:1rem;">👨‍👩‍👧</div>
+                        <h1>Build your care network.</h1>
+                        <p>Invite a family member or caregiver to receive secure, read-only updates on your progress and
+                            care plan.</p>
+                        <input type="tel" placeholder="Caregiver's Phone (Optional)"
+                            style="padding:1rem;border-radius:12px;border:none;width:100%;outline:none;margin-top:1rem;color:var(--gray-800);" />
+                        <input type="email" placeholder="Caregiver's Email"
+                            style="padding:1rem;border-radius:12px;border:none;width:100%;outline:none;margin-top:0.5rem;color:var(--gray-800);" />
+                        <div style="display:flex;gap:1rem;margin-top:1rem;width:100%;">
+                            <button class="btn btn-outline full-width"
+                                style="border-color:var(--white);color:var(--white);" id="onboard-skip-3">Do
+                                Later</button>
+                            <button class="btn btn-primary full-width" id="onboard-next-3"
+                                style="background:var(--white);color:var(--teal-600);">Send Invite</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Home Dashboard -->
+            <section id="home-screen" class="screen hidden">
+                <header class="main-header"
+                    style="display:flex; justify-content:space-between; align-items:flex-start;">
+                    <div>
+                        <h1 class="header-title">Good morning, Andrew</h1>
+                        <p class="header-subtitle">Day 3 of your recovery</p>
+                    </div>
+                    <button class="btn btn-outline"
+                        style="padding:0.5rem 0.8rem; font-size:0.85rem; border-color:var(--gray-200); color:var(--gray-800);"
+                        onclick="navigateTo('profile-screen')"><span class="icon"
+                            style="transform:none;opacity:1;margin-right:4px;">👤</span>Profile</button>
+                </header>
+                <div class="scroll-content">
+                    <section class="quick-stats row">
+                        <div class="stat-card">
+                            <span class="stat-value" id="stat-next-appt">Aug 14</span>
+                            <span class="stat-label">Next Appt</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value" id="stat-meds">3</span>
+                            <span class="stat-label">Meds Due</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-value streak">3 🔥</span>
+                            <span class="stat-label">Day Streak</span>
+                        </div>
+                    </section>
+
+                    <section class="task-strip">
+                        <h2>Today's Tasks</h2>
+                        <div class="task-list" id="home-task-list">
+                            <!-- JS Populated -->
+                        </div>
+                    </section>
+
+                    <section class="mt-6">
+                        <h3 style="margin-top:1.5rem;">Connected Hospital</h3>
+                        <div class="card"
+                            style="display:flex; flex-direction:column; gap:0.5rem; margin-bottom:1.5rem; border:1px solid var(--border-color);">
+                            <div style="display:flex;justify-content:space-between;align-items:center;">
+                                <div style="display:flex;align-items:center;gap:12px;">
+                                    <div class="avatar" style="background:var(--gray-100);border-radius:8px;">🏥</div>
+                                    <div>
+                                        <h4 style="margin:0;font-size:1.1rem;color:var(--gray-800);">Cardiac Care
+                                            Associates</h4>
+                                        <p style="margin:0;font-size:0.85rem;color:var(--gray-600);">Main Campus • 12
+                                            Miles Away</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div
+                                style="height:100px;background:var(--bg-app);border-radius:8px;margin-top:0.5rem;display:flex;align-items:center;justify-content:center;color:var(--gray-400);font-size:2rem;border:1px solid var(--gray-200);">
+                                🗺️
+                            </div>
+                            <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                                <button class="btn btn-secondary" style="flex:1;padding:0.5rem;font-size:0.9rem;"
+                                    onclick="navigateTo('transport-screen')">Book Ride</button>
+                                <button class="btn btn-outline"
+                                    style="flex:1;padding:0.5rem;font-size:0.9rem;border-color:var(--gray-200);color:var(--gray-800);">Location
+                                    Details</button>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+                <button class="fab" id="fab-chat">
+                    <span class="fab-icon">🤖</span> Ask CareLink
+                </button>
+            </section>
+
+            <!-- Chat Screen -->
+            <section id="chat-screen" class="screen hidden flex-col">
+                <header class="app-header">
+                    <h2>CareLink</h2>
+                    <span class="online-indicator">Online</span>
+                </header>
+                <div id="chat-container" class="chat-history">
+                    <!-- Chat messages -->
+                </div>
+                <div class="quick-replies" id="quick-replies">
+                    <button class="chip">What's my care plan?</button>
+                    <button class="chip">Book an appointment</button>
+                    <button class="chip">When's my Lisinopril?</button>
+                    <button class="chip">Ask Doctor</button>
+                    <button class="chip">Book a ride</button>
+                </div>
+                <div class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Ask me anything about your recovery..."
+                        autocomplete="off" />
+                    <button id="chat-send-btn" class="icon-btn" disabled>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                            <path d="M22 2L15 22L11 13L2 9L22 2Z" fill="currentColor" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Medications Screen -->
+            <section id="meds-screen" class="screen hidden bg-gray">
+                <header class="app-header">
+                    <h2>Medications</h2>
+                </header>
+                <div class="scroll-content">
+                    <div class="progress-container"
+                        style="text-align:left; display:block; padding:1.5rem; background:var(--bg-main); border:1px solid var(--border-color);">
+                        <div
+                            style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                            <h3 style="margin:0; font-size:1.1rem;">Daily Progress</h3>
+                            <span id="meds-progress-text"
+                                style="font-weight:800; color:var(--teal-600); font-size:0.9rem;">0 of 3 taken</span>
+                        </div>
+                        <div
+                            style="width:100%; height:12px; background:var(--bg-app); border-radius:10px; overflow:hidden; border:1px solid var(--gray-200);">
+                            <div id="meds-progress-bar"
+                                style="height:100%; width:0%; background:var(--teal-500); border-radius:10px; transition:width 0.4s ease;">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="celebration-banner" class="celebration hidden">
+                        All done for today! Great job staying on track 🎉
+                    </div>
+                    <div class="meds-list" id="meds-list-container">
+                        <!-- JS Populated -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Appointments Screen -->
+            <section id="appts-screen" class="screen hidden bg-gray">
+                <header class="app-header">
+                    <h2>Appointments</h2>
+                </header>
+                <div class="scroll-content">
+                    <h3>Upcoming</h3>
+                    <div id="upcoming-appts">
+                        <!-- JS Populated -->
+                    </div>
+                    <button class="btn btn-primary full-width mt-4" id="book-appt-btn">Book New Appointment</button>
+
+                    <h3 class="mt-6" style="margin-top:2rem;margin-bottom:1rem;">Past Appointments</h3>
+                    <div id="past-appts">
+                        <!-- JS Populated -->
+                    </div>
+                </div>
+            </section>
+            <!-- Vitals Screen -->
+            <section id="vitals-screen" class="screen hidden bg-gray">
+                <header class="app-header">
+                    <h2>Health Vitals</h2>
+                    <span class="online-indicator" style="color:var(--teal-600);">Live Sync</span>
+                </header>
+                <div class="scroll-content">
+                    <div
+                        style="display:flex; justify-content:space-between; align-items:center; background:var(--bg-main); padding:1.5rem 1rem; border-radius:16px; margin-bottom:1.5rem; border:1px solid var(--border-color); box-shadow:var(--shadow-sm);">
+
+                        <!-- Sleep -->
+                        <div style="text-align:center;">
+                            <div style="position:relative; width:70px; height:70px; margin:0 auto;">
+                                <svg viewBox="0 0 36 36">
+                                    <circle cx="18" cy="18" r="16" fill="none" stroke="var(--gray-200)"
+                                        stroke-width="4" />
+                                    <circle cx="18" cy="18" r="16" fill="none" stroke="#3b82f6" stroke-width="4"
+                                        stroke-dasharray="100" stroke-dashoffset="16" stroke-linecap="round"
+                                        transform="rotate(-90 18 18)" />
+                                </svg>
+                                <div
+                                    style="position:absolute; top:50%;left:50%;transform:translate(-50%,-50%); color:var(--gray-800); font-size:1.1rem; font-weight:800;">
+                                    84<span style="font-size:0.7rem">%</span></div>
+                            </div>
+                            <div
+                                style="color:var(--gray-600); font-size:0.75rem; margin-top:0.75rem; font-weight:800; letter-spacing:1px;">
+                                SLEEP</div>
+                        </div>
+
+                        <!-- Recovery -->
+                        <div style="text-align:center;">
+                            <div style="position:relative; width:85px; height:85px; margin:0 auto;">
+                                <svg viewBox="0 0 36 36" style="filter:drop-shadow(0 2px 4px rgba(16,185,129,0.2));">
+                                    <circle cx="18" cy="18" r="16" fill="none" stroke="var(--bg-main)"
+                                        stroke-width="4" />
+                                    <circle cx="18" cy="18" r="16" fill="none" stroke="#10b981" stroke-width="4"
+                                        stroke-dasharray="100" stroke-dashoffset="25" stroke-linecap="round"
+                                        transform="rotate(-90 18 18)" />
+                                </svg>
+                                <div
+                                    style="position:absolute; top:50%;left:50%;transform:translate(-50%,-50%); color:var(--gray-800); font-size:1.4rem; font-weight:800;">
+                                    75<span style="font-size:0.9rem">%</span></div>
+                            </div>
+                            <div
+                                style="color:var(--gray-600); font-size:0.75rem; margin-top:0.75rem; font-weight:800; letter-spacing:1px;">
+                                RECOVERY</div>
+                        </div>
+
+                        <!-- Strain / Activity -->
+                        <div style="text-align:center;">
+                            <div style="position:relative; width:70px; height:70px; margin:0 auto;">
+                                <svg viewBox="0 0 36 36">
+                                    <circle cx="18" cy="18" r="16" fill="none" stroke="var(--gray-200)"
+                                        stroke-width="4" />
+                                    <circle cx="18" cy="18" r="16" fill="none" stroke="#ef4444" stroke-width="4"
+                                        stroke-dasharray="100" stroke-dashoffset="57" stroke-linecap="round"
+                                        transform="rotate(-90 18 18)" />
+                                </svg>
+                                <div
+                                    style="position:absolute; top:50%;left:50%;transform:translate(-50%,-50%); color:var(--gray-800); font-size:1.1rem; font-weight:800;">
+                                    4.3</div>
+                            </div>
+                            <div
+                                style="color:var(--gray-600); font-size:0.75rem; margin-top:0.75rem; font-weight:800; letter-spacing:1px;">
+                                ACTIVITY</div>
+                        </div>
+
+                    </div>
+
+                    <h3 style="margin-bottom:1rem;">My Dashboard</h3>
+                    <div style="display:flex;flex-direction:column;gap:0.75rem;margin-bottom:1.5rem;">
+                        <!-- Existing -->
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">❤️</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Resting Heart
+                                    Rate</span></div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">72</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">BPM</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">📉</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Heart Rate
+                                    Var.</span></div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">42</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">ms</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🩸</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Blood
+                                    Pressure</span></div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.3rem;font-weight:800;color:var(--gray-800);">118/76</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">mmHg</div>
+                            </div>
+                        </div>
+                        <!-- 15 Extended Vitals -->
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">💧</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Blood Oxygen</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">98</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">SpO2 %</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🫁</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Respiratory
+                                    Rate</span></div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">14</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">br/pm</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🌡️</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Body Temp</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">98.6</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">°F</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🥱</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Sleep Debt</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">45</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">mins</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🛏️</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Deep Sleep</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.3rem;font-weight:800;color:var(--gray-800);">1h 45m</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">Duration</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🧠</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">REM Sleep</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.3rem;font-weight:800;color:var(--gray-800);">2h 10m</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">Duration</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🏃‍♂️</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Active
+                                    Minutes</span></div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">45</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">mins</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🔥</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Calories
+                                    Burned</span></div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">2,450</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">kcal</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">👟</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Steps Taken</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">8,420</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">steps</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🩸</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Glucose
+                                    Level</span></div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">95</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">mg/dL</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🥛</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Hydration</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">64</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">fl oz</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">⚡</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Stress
+                                    Monitor</span></div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.2rem;font-weight:800;color:var(--teal-600);">Low</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">1.2 Index</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">🫀</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">VO2 Max</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">38.5</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">mL/kg/min</div>
+                            </div>
+                        </div>
+                        <div class="card"
+                            style="margin:0;display:flex;justify-content:space-between;align-items:center;padding:1.2rem;box-shadow:var(--shadow-sm);">
+                            <div style="display:flex;align-items:center;gap:12px;"><span
+                                    style="font-size:1.2rem;">⚖️</span><span
+                                    style="font-weight:700;color:var(--gray-800);font-size:0.95rem;">Body Weight</span>
+                            </div>
+                            <div style="text-align:right;">
+                                <div style="font-size:1.5rem;font-weight:800;color:var(--gray-800);">174</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);font-weight:700;">lbs</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Timeline Screen -->
+            <section id="timeline-screen" class="screen hidden bg-gray">
+                <header class="app-header">
+                    <h2>Recovery Timeline</h2>
+                    <span class="online-indicator" style="color:var(--teal-600);">Day 3</span>
+                </header>
+                <div class="scroll-content" style="padding:0;">
+                    <!-- Horizontal Calendar built via JS -->
+                    <div id="timeline-calendar-container"
+                        style="display:flex; gap:0.5rem; padding:1.5rem 1rem; overflow-x:auto; background:var(--bg-main); border-bottom:1px solid var(--border-color); margin-bottom:1.5rem; scroll-snap-type: x mandatory;">
+                    </div>
+
+                    <!-- Daily Cards built via JS -->
+                    <div id="timeline-cards-container" style="padding:0 1.5rem;">
+                    </div>
+                </div>
+            </section>
+
+            <!-- User Profile Screen -->
+            <section id="profile-screen" class="screen hidden bg-gray">
+                <header class="app-header">
+                    <h2>Patient Profile</h2>
+                </header>
+                <div class="scroll-content">
+                    <div class="card" style="display:flex;align-items:center;gap:1.5rem;padding:1.5rem;">
+                        <div class="avatar lg"
+                            style="margin:0;font-size:2.5rem;background:var(--teal-100);color:var(--teal-700);">AM</div>
+                        <div>
+                            <h2 style="margin:0;font-size:1.5rem;">Andrew Mitchell</h2>
+                            <p style="font-size:0.9rem;color:var(--gray-600);margin-top:2px;">Age: 68 • Male</p>
+                            <div
+                                style="margin-top:0.75rem;display:inline-block;padding:0.25rem 0.75rem;background:var(--blue-50);color:var(--blue-100);border-radius:100px;font-size:0.75rem;font-weight:800;">
+                                PT-8924A</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin:1.5rem 0 1rem 0;">Primary Contacts</h3>
+                    <div class="card"
+                        style="margin-bottom:0.75rem;display:flex;justify-content:space-between;align-items:center;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="avatar" style="background:var(--gray-100);font-size:1rem;">👩</div>
+                            <div>
+                                <div style="font-weight:700;">Sarah Mitchell</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);">Daughter (Caregiver)</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" style="padding:0.6rem;border-radius:12px;">Call</button>
+                    </div>
+                    <div class="card"
+                        style="margin-bottom:0.75rem;display:flex;justify-content:space-between;align-items:center;">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <div class="avatar" style="background:var(--teal-50);color:var(--teal-600);font-size:1rem;">
+                                🩺</div>
+                            <div>
+                                <div style="font-weight:700;">Dr. Sarah Smith</div>
+                                <div style="font-size:0.8rem;color:var(--gray-600);">Lead Cardiologist</div>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary" style="padding:0.6rem;border-radius:12px;">Message</button>
+                    </div>
+
+                    <h3 style="margin:1.5rem 0 1rem 0;">Medical History</h3>
+                    <div class="card">
+                        <ul style="padding-left:1.5rem;color:var(--gray-800);font-size:0.9rem;line-height:1.8;">
+                            <li>Cardiac Arrest (Aug 2026)</li>
+                            <li>Hypertension (Diagnosed 2018)</li>
+                            <li>Type II Diabetes (Diet-controlled)</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transport Screen -->
+            <section id="transport-screen" class="screen hidden bg-gray">
+                <header class="app-header">
+                    <h2>Transportation</h2>
+                </header>
+                <div class="scroll-content">
+                    <h3>Upcoming Rides</h3>
+                    <div class="transport-card"
+                        style="background:var(--white);margin-top:1rem;box-shadow:var(--shadow-sm);">
+                        <div class="transport-map" style="height:140px;">🗺️ Route Map</div>
+                        <div class="transport-details">
+                            <div style="font-weight:700;font-size:1.1rem;">Sept 2 • 10:45 AM</div>
+                            <div style="font-size:0.9rem;color:var(--gray-600);margin-top:4px;">Pick-up at Home •
+                                Drop-off at Cardiology Clinic</div>
+                            <div
+                                style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--gray-100);display:flex;align-items:center;gap:12px;">
+                                <div class="avatar"
+                                    style="width:40px;height:40px;background:#e2e8f0;font-size:1rem;color:#000;">🚗
+                                </div>
+                                <div>
+                                    <div style="font-weight:600;">Standard Medical Transport</div>
+                                    <div style="font-size:0.8rem;color:var(--gray-600);">Driver assigned 24hrs prior.
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary full-width mt-4" style="background:var(--gray-100);">Manage
+                                Ride</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary full-width mt-4"
+                        onclick="document.querySelector('[data-target=\'chat-screen\']').click(); document.getElementById('chat-input').value='I need a ride to the hospital'; document.getElementById('chat-send-btn').disabled=false;">Book
+                        a New Ride</button>
+                </div>
+            </section>
+            <!-- Reports Screen -->
+            <section id="reports-screen" class="screen hidden bg-gray">
+                <header class="app-header">
+                    <h2>Medical Reports</h2>
+                </header>
+                <div class="scroll-content">
+                    <div class="card" style="margin-bottom:1.5rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3 style="margin:0;">Lipid Panel</h3>
+                            <span
+                                style="font-size:0.75rem;padding:4px 8px;background:var(--blue-50);color:var(--blue-100);border-radius:100px;font-weight:700;">Aug
+                                24, 2026</span>
+                        </div>
+
+                        <!-- Specific Metric -->
+                        <div style="margin-bottom:1rem;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                                <span style="font-weight:600;font-size:0.9rem;color:var(--gray-800);">LDL
+                                    Cholesterol</span>
+                                <span style="font-weight:800;font-size:0.9rem;color:#ef4444;">135 <span
+                                        style="font-weight:500;font-size:0.75rem;color:var(--gray-600);">mg/dL</span></span>
+                            </div>
+                            <div
+                                style="height:8px;background:linear-gradient(to right, #4ade80 40%, #facc15 30%, #f87171 30%);border-radius:4px;position:relative;">
+                                <div
+                                    style="position:absolute;top:-4px;bottom:-4px;width:4px;background:var(--gray-800);border-radius:2px;left:75%;">
+                                </div>
+                            </div>
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--gray-400);margin-top:6px;font-weight:600;">
+                                <span>Normal (< 100)</span><span>High</span>
+                            </div>
+                        </div>
+
+                        <!-- Insights -->
+                        <div
+                            style="background:var(--bg-main);padding:1rem;border-radius:8px;border:1px solid var(--gray-200);margin-top:1.5rem;">
+                            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                                <span style="font-size:1.1rem;">💡</span><span
+                                    style="font-weight:800;font-size:0.85rem;color:var(--gray-800);text-transform:uppercase;">Doctor's
+                                    Insight</span>
+                            </div>
+                            <p style="font-size:0.85rem;color:var(--gray-600);line-height:1.6;">LDL is slightly
+                                elevated. Given your recent cardiac event, Dr. Smith strongly advises adhering to your
+                                prescribed statins and strict low-sodium, low-fat diet. Repeat test in 3 months.</p>
+                        </div>
+                    </div>
+
+                    <div class="card" style="margin-bottom:1.5rem;">
+                        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                            <h3 style="margin:0;">Metabolic Panel (BMP)</h3>
+                            <span
+                                style="font-size:0.75rem;padding:4px 8px;background:var(--blue-50);color:var(--blue-100);border-radius:100px;font-weight:700;">Aug
+                                24, 2026</span>
+                        </div>
+
+                        <!-- Specific Metric -->
+                        <div style="margin-bottom:1rem;">
+                            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+                                <span style="font-weight:600;font-size:0.9rem;color:var(--gray-800);">Potassium</span>
+                                <span style="font-weight:800;font-size:0.9rem;color:#facc15;">3.4 <span
+                                        style="font-weight:500;font-size:0.75rem;color:var(--gray-600);">mEq/L</span></span>
+                            </div>
+                            <div
+                                style="height:8px;background:linear-gradient(to right, #facc15 20%, #4ade80 60%, #f87171 20%);border-radius:4px;position:relative;">
+                                <div
+                                    style="position:absolute;top:-4px;bottom:-4px;width:4px;background:var(--gray-800);border-radius:2px;left:18%;">
+                                </div>
+                            </div>
+                            <div
+                                style="display:flex;justify-content:space-between;font-size:0.7rem;color:var(--gray-400);margin-top:6px;font-weight:600;">
+                                <span>Low (< 3.6)</span><span>Normal (3.6-5.2)</span><span>High</span>
+                            </div>
+                        </div>
+
+                        <!-- Insights -->
+                        <div
+                            style="background:var(--bg-main);padding:1rem;border-radius:8px;border:1px solid var(--gray-200);margin-top:1.5rem;">
+                            <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+                                <span style="font-size:1.1rem;">💡</span><span
+                                    style="font-weight:800;font-size:0.85rem;color:var(--gray-800);text-transform:uppercase;">Doctor's
+                                    Insight</span>
+                            </div>
+                            <p style="font-size:0.85rem;color:var(--gray-600);line-height:1.6;">Potassium is slightly
+                                low. Your Lisinopril dosage was intentionally adjusted to counterbalance this naturally.
+                                No direct intervention needed, but incorporate bananas or spinach into meals.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Appt Details Screen -->
+            <section id="appt-details-screen" class="screen hidden bg-gray">
+                <header class="app-header" style="justify-content:flex-start;gap:1.5rem;border-bottom:none;">
+                    <button class="btn btn-secondary"
+                        style="padding:0.5rem 1rem;border-radius:12px;display:flex;align-items:center;gap:4px;"
+                        onclick="navigateTo('appts-screen')"><span>←</span><span>Back</span></button>
+                    <h2 id="appt-det-title" style="margin:0;">Visit Details</h2>
+                </header>
+                <div class="scroll-content" id="appt-det-content" style="padding-top:0;">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav id="bottom-nav" class="bottom-nav hidden locked-nav">
+            <button class="nav-item active" data-target="home-screen">
+                <span class="icon">🏠</span>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" data-target="chat-screen">
+                <span class="icon">💬</span>
+                <span>Chat</span>
+            </button>
+            <button class="nav-item" data-target="meds-screen">
+                <span class="icon">💊</span>
+                <span>Meds</span>
+            </button>
+            <button class="nav-item" data-target="appts-screen">
+                <span class="icon">📅</span>
+                <span>Appts</span>
+            </button>
+        </nav>
+
+        <!-- Overlays -->
+        <div id="notification-overlay" class="overlay hidden">
+            <div class="lock-screen">
+                <div class="lock-time" id="lock-time">3:23</div>
+                <div class="lock-date" id="lock-date">Wednesday, Sept 1</div>
+
+                <div class="push-notification" id="push-notification-card">
+                    <div class="push-header">
+                        <span class="push-icon">⚕️ CareLink</span>
+                        <span class="push-time">now</span>
+                    </div>
+                    <h4 class="push-title" id="push-title">REMINDER</h4>
+                    <p class="push-body" id="push-body">Message contents...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="reschedule-modal" class="modal-overlay hidden">
+            <div class="modal">
+                <h3>Reschedule Appointment</h3>
+                <p>Select a new time for your appointment:</p>
+                <div class="slot-list mt-4" id="reschedule-slots">
+                    <!-- Slots JS -->
+                </div>
+                <button class="btn btn-secondary full-width mt-4" id="close-modal-btn">Cancel</button>
+            </div>
+        </div>
+
+        <div id="caregiver-modal" class="modal-overlay hidden">
+            <div class="modal text-center">
+                <h3>Invite Caregiver</h3>
+                <p style="margin-top:0.5rem;color:var(--gray-600);font-size:0.9rem;">Allow a family member or nurse
+                    read-only access to your care plan to keep them in check.</p>
+                <input type="email" class="full-width mt-4" placeholder="Email address"
+                    style="padding:0.875rem;border:1px solid var(--gray-200);border-radius:12px;outline:none;" />
+                <button class="btn btn-primary full-width mt-4" id="submit-caregiver-btn">Send Invite</button>
+                <button class="btn btn-secondary full-width mt-4" id="close-caregiver-btn">Cancel</button>
+            </div>
+        </div>
+
+        <div id="feedback-modal" class="modal-overlay hidden">
+            <div class="modal text-center">
+                <h3>Agent Feedback</h3>
+                <p style="margin-top:0.5rem;color:var(--gray-600);font-size:0.9rem;">How is your experience with
+                    CareLink? Help us build better features for you.</p>
+                <div style="font-size:2rem;margin:1rem 0;color:var(--gray-200);cursor:pointer;" id="feedback-stars">
+                    <span style="color:#fbbf24;">⭐</span><span style="color:#fbbf24;">⭐</span><span
+                        style="color:#fbbf24;">⭐</span><span style="color:#fbbf24;">⭐</span><span
+                        style="color:#fbbf24;">⭐</span>
+                </div>
+                <textarea class="full-width" rows="3" placeholder="Tell us more about your experience..."
+                    style="padding:0.75rem;border:1px solid var(--gray-200);border-radius:12px;outline:none;resize:none;"></textarea>
+                <button class="btn btn-primary full-width mt-4" id="submit-feedback-btn">Submit Feedback</button>
+                <button class="btn btn-secondary full-width mt-4" id="close-feedback-btn">Cancel</button>
+            </div>
+        </div>
+
+    </div>
+    <script type="module" src="main.js"></script>
+</body>
+
+</html>
